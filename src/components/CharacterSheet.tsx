@@ -26,7 +26,7 @@ const CharacterSheet: React.FC = () => {
     setDET(newDET);
     setSPD(newSPD);
     setEVS(newEVS);
-    alert("Character created!");
+    alert("Character created!!");
   };
 
   return (
