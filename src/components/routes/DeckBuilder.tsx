@@ -1,49 +1,96 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Formik, Form, Field } from "formik";
+
+interface CardValues {
+  name: string;
+  hp: number;
+  wp: number;
+  dex: number;
+  det: number;
+  spd: number;
+  evs: number;
+}
 
 function DeckBuilder() {
-  const [CardName, setCardName] = useState("");
-  const [CardHP, setCardHP] = useState(0);
-  const [CardWP, setCardWP] = useState(0);
-  const [CardDEX, setCardDEX] = useState(0);
-  const [CardDET, setCardDET] = useState(0);
-  const [CardSPD, setCardSPD] = useState(0);
-  const [CardEVS, setCardEVS] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [cardData, setCardData] = useState<CardValues>(() => {
+    const saved = localStorage.getItem("cardData");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          name: "Cheems",
+          hp: 0,
+          wp: 0,
+          dex: 0,
+          det: 0,
+          spd: 0,
+          evs: 0,
+        };
+  });
 
-  const [newCardName, setNewCardName] = useState("newName");
-  const [newCardHP, setNewCardHP] = useState("newHP");
-  const [newCardWP, setNewCardWP] = useState("newWP");
-  const [newCardDEX, setNewCardDEX] = useState("newDEX");
-  const [newCardDET, setNewCardDET] = useState("newDET");
-  const [newCardSPD, setNewCardSPD] = useState("newSPD");
-  const [newCardEVS, setNewCardEVS] = useState("newEVS");
-
-  const handleEdit = () => {
-    setCardName(newCardName);
-    setCardHP(newCardHP);
-    setCardWP(newCardWP);
-    setCardDEX(newCardDEX);
-    setCardDET(newCardDET);
-    setCardSPD(newCardSPD);
-    setCardEVS(newCardEVS);
-    alert("Card added to Deck!");
+  const handleSubmit = (values: CardValues) => {
+    localStorage.setItem("cardData", JSON.stringify(values));
+    setCardData(values);
+    setIsEditing(false);
   };
+
   return (
     <>
-      <h1>Build your deck, hoe!</h1>
+      <h1>Build your deck!</h1>
       <div className="card w-50">
         <img
           src="./src/assets/cheems.jpg"
           className="card-img-top"
-          alt="..."
-        ></img>
+          alt="Card character"
+        />
         <div className="card-body">
           <h5 className="card-title">♠13</h5>
-          <h5 className="card-title">Cheems</h5>
-          <p className="card-text">'A leyemdary beast'</p>
-          <p>HP:, WP:, DEX:, DET:, SPD:, EVS:</p>
-          <a href="#" className="btn btn-primary" onClick={handleEdit}>
-            Edit
-          </a>
+
+          {isEditing ? (
+            <Formik initialValues={cardData} onSubmit={handleSubmit}>
+              <Form>
+                <Field name="name" type="text" className="form-control mb-2" />
+                {Object.entries(cardData).map(
+                  ([key]) =>
+                    key !== "name" && (
+                      <div key={key} className="mb-2">
+                        <label>{key.toUpperCase()}:</label>
+                        <Field
+                          name={key}
+                          type="number"
+                          className="form-control"
+                        />
+                      </div>
+                    )
+                )}
+                <button type="submit" className="btn btn-primary me-2">
+                  Save Card
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </button>
+              </Form>
+            </Formik>
+          ) : (
+            <>
+              <h5>{cardData.name}</h5>
+              <p className="card-text">'A legendary beast'</p>
+              <p>
+                HP: {cardData.hp}, WP: {cardData.wp}, DEX: {cardData.dex}, DET:{" "}
+                {cardData.det}, SPD: {cardData.spd}, EVS: {cardData.evs}
+              </p>
+              <button
+                className="btn btn-primary"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </button>
+            </>
+          )}
         </div>
       </div>
     </>
