@@ -12,28 +12,31 @@ interface CharacterValues {
 }
 
 const CharacterSheet: React.FC = () => {
-  const initialValues: CharacterValues = {
-    name: "",
-    hp: 0,
-    wp: 0,
-    dex: 0,
-    det: 0,
-    spd: 0,
-    evs: 0,
-  };
+  const initialValues: CharacterValues = JSON.parse(
+    localStorage.getItem("character") ||
+      JSON.stringify({
+        name: "",
+        hp: 0,
+        wp: 0,
+        dex: 0,
+        det: 0,
+        spd: 0,
+        evs: 0,
+      })
+  );
 
   const handleSubmit = (values: CharacterValues) => {
-    // Handle character creation here
-    console.log(values);
+    localStorage.setItem("character", JSON.stringify(values));
+    alert("Character saved to localStorage!");
   };
 
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
       {({ values }) => (
         <Form>
-          <div className="bg-gray-800 text-black p-4 mb-4">
+          <div className="bg-sky-600 text-black p-4 mb-4">
             <h2>Player's Character</h2>
-            <div className="bg-gray-700 p-2 rounded-md">
+            <div className="bg-violet-400 p-2 rounded-md w-50">
               {Object.entries(initialValues).map(([key]) => (
                 <div key={key} className="mb-4">
                   <div className="text-xl font-medium">
@@ -44,7 +47,21 @@ const CharacterSheet: React.FC = () => {
                     <Field
                       name={key}
                       type={key === "name" ? "text" : "number"}
-                      className="ml-2 px-2 py-1 rounded"
+                      className={`ml-2 px-2 py-1 rounded ${
+                        values[key as keyof CharacterValues] === 0
+                          ? "bg-yellow-200"
+                          : key === "hp" && values.hp > 50
+                          ? "bg-red-200"
+                          : key === "wp" && values.wp > 100
+                          ? "bg-red-200"
+                          : (key === "det" ||
+                              key === "dex" ||
+                              key === "spd" ||
+                              key === "evs") &&
+                            values[key as keyof CharacterValues] > 4
+                          ? "bg-red-200"
+                          : "bg-teal-400"
+                      }`}
                     />
                   </div>
                 </div>

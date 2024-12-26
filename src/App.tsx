@@ -1,15 +1,16 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "./components/routes/Home";
-import Navbar from "./components/Navbar";
-import GameBoard from "./components/routes/GameBoard";
-import DeckBuilder from "./components/routes/DeckBuilder";
+import Home from "../src/routes/Home";
+import Navbar from "../src/components/Navbar";
+import GameBoard from "../src/routes/GameBoard";
+import DeckBuilder from "../src/routes/DeckBuilder";
+import React from "react";
 
 function App() {
   return (
     <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/Home" element={<Home />} />
         <Route path="/GameBoard" element={<GameBoard />} />
         <Route path="/DeckBuilder" element={<DeckBuilder />} />
       </Routes>
